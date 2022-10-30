@@ -1,0 +1,17 @@
+CREATE  PROC movie_search(
+    @name VARCHAR(MAX)
+) AS 
+BEGIN
+    DECLARE @movie VARCHAR(MAX);
+
+    SET @movie = '';
+
+    SELECT
+        @movie = @movie + movies.title + CHAR(10);
+    FROM 
+        proj_db.movies
+    WHERE
+        movies.title = @name
+
+    PRINT @movie;
+END;

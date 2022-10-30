@@ -1,0 +1,18 @@
+CREATE  PROC rating_search(
+    @username VARCHAR(MAX)
+) AS 
+BEGIN
+    DECLARE @rate VARCHAR(MAX);
+
+    SET @rate = '';
+
+    SELECT
+        @rate = @rate + r.rating_num + ' ' + show_id + CHAR(10);
+    FROM 
+        proj_db.ratings r, proj_db.users u
+    WHERE
+        u.username = @name and
+        u.user_id = r.user_id;
+
+    PRINT @rate;
+END;

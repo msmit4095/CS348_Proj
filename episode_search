@@ -1,0 +1,19 @@
+CREATE  PROC episode_search(
+    @name VARCHAR(MAX)
+) AS 
+BEGIN
+    DECLARE @episode VARCHAR(MAX);
+
+    SET @episode = '';
+
+    SELECT
+        @episode = @episode + e.title + CHAR(10);
+    FROM 
+        proj_db.episodes e
+    WHERE
+        e.title = @name
+    group by
+        e.title
+
+    PRINT @episode;
+END;

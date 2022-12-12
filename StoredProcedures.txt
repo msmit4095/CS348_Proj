@@ -1,0 +1,185 @@
+DROP PROCEDURE IF EXISTS Login;
+DROP PROCEDURE IF EXISTS AddUser;
+DROP PROCEDURE IF EXISTS DeleteUser;
+DROP PROCEDURE IF EXISTS UpdatePass;
+DROP PROCEDURE IF EXISTS GetMovieList;
+DROP PROCEDURE IF EXISTS GetShowList;
+DROP PROCEDURE IF EXISTS GetEpisodeList;
+DROP PROCEDURE IF EXISTS GetMovieRatings;
+DROP PROCEDURE IF EXISTS GetShowRatings;
+DROP PROCEDURE IF EXISTS GetEpisodeRatings;
+DROP PROCEDURE IF EXISTS GetAvgMovieRating;
+DROP PROCEDURE IF EXISTS GetAvgShowRating;
+DROP PROCEDURE IF EXISTS GetAvgEpisodeRating;
+DROP PROCEDURE IF EXISTS GetMovieComments;
+DROP PROCEDURE IF EXISTS GetShowComments;
+DROP PROCEDURE IF EXISTS GetEpisodeComments;
+DELIMITER //
+CREATE PROCEDURE Login(
+    IN uservar VARCHAR(32),
+    IN passvar VARCHAR(32)
+)
+BEGIN
+    SELECT user_id
+    FROM users
+    WHERE username = uservar AND password = passvar;
+END //
+CREATE PROCEDURE AddUser(
+    IN uservar VARCHAR(32),
+    IN passvar VARCHAR(32)
+)
+BEGIN
+    INSERT INTO users(username, password)
+    VALUES (uservar, passvar);
+END //
+CREATE PROCEDURE DeleteUser(
+    IN userid INT
+)
+BEGIN
+    DELETE
+    FROM users
+    WHERE user_id = userid;
+END //
+CREATE PROCEDURE UpdatePass(
+    IN userid INT,
+    IN passvar VARCHAR(32)
+)
+BEGIN
+    UPDATE users
+    SET password = passvar
+    WHERE user_id = userid;
+END //
+CREATE PROCEDURE GetMovieList()
+BEGIN
+    SELECT *
+    FROM movies;
+END //
+CREATE PROCEDURE GetShowList()
+BEGIN
+    SELECT DISTINCT show_id, showTitle
+    FROM episodes;
+END //
+CREATE PROCEDURE GetEpisodeList(
+    IN showid INT
+)
+BEGIN
+    SELECT *
+    FROM episodes
+    WHERE show_id = showid
+    ORDER BY episode_id;
+END //
+CREATE PROCEDURE GetMovieRatings(
+    IN movieid INT
+)
+BEGIN
+    SELECT *
+    FROM movieRatings
+    WHERE show_id = movieid;
+END //
+CREATE PROCEDURE GetShowRatings(
+    IN showid INT
+)
+BEGIN
+    SELECT *
+    FROM TVRatings
+    WHERE show_id = showid
+    ORDER BY episode_id;
+END //
+CREATE PROCEDURE GetEpisodeRatings(
+    IN showid INT,
+    IN episodeid INT
+)
+BEGIN
+    SELECT *
+    FROM TVRatings
+    WHERE show_id = showid AND episode_id = episodeid;
+END //
+CREATE PROCEDURE GetAvgMovieRating(
+    IN movieid INT
+)
+BEGIN
+    SELECT AVG(rating_num)
+    FROM movieRatings
+    WHERE show_id = movieid;
+END //
+CREATE PROCEDURE GetAvgShowRating(
+    IN showid INT
+)
+BEGIN
+    SELECT AVG(rating_num)
+    FROM TVRatings
+    WHERE show_id = showid;
+END //
+CREATE PROCEDURE GetAvgEpisodeRating(
+    IN showid INT,
+    IN episodeid INT
+)
+BEGIN
+    SELECT AVG(rating_num)
+    FROM TVRatings
+    WHERE show_id = showid AND episode_id = episodeid;
+END //
+CREATE PROCEDURE GetMovieComments(
+    IN movieid INT
+)
+BEGIN
+    SELECT *
+    FROM movieComments
+    WHERE show_id = movieid;
+END //
+CREATE PROCEDURE GetShowComments(
+    IN showid INT
+)
+BEGIN
+    SELECT *
+    FROM TVComments
+    WHERE show_id = showid;
+END //
+CREATE PROCEDURE GetEpisodeComments(
+    IN showid INT,
+    IN episodeid INT
+)
+BEGIN
+    SELECT *
+    FROM TVComments
+    WHERE show_id = showid AND episode_id = episodeid;
+END //
+CREATE PROCEDURE AddMovieReview(
+    IN showid INT,
+    IN userid INT,
+    IN rating INT
+)
+BEGIN
+    INSERT INTO movieRatings(user_id, show_id, rating_num)
+    VALUES (userid, showid, rating);
+END //
+CREATE PROCEDURE AddShowReview(
+    IN showid INT,
+    IN epid INT,
+    IN userid INT,
+    IN rating INT
+)
+BEGIN
+    INSERT INTO TVRatings(user_id, show_id, episode_id, rating_num)
+    VALUES (userid, showid, epid, rating);
+END //
+CREATE PROCEDURE AddMovieComment(
+    IN showid INT,
+    IN userid INT,
+    IN comment VARCHAR(1000)
+)
+BEGIN
+    INSERT INTO movieComments(user_id, show_id, content)
+    VALUES (userid, showid, comment);
+END //
+CREATE PROCEDURE AddShowComment(
+    IN showid INT,
+    IN epid INT,
+    IN userid INT,
+    IN comment VARCHAR(1000)
+)
+BEGIN
+    INSERT INTO TVComments(user_id, show_id, episode_id, content)
+    VALUES (userid, showid, epid, comment);
+END //
+DELIMITER ;
